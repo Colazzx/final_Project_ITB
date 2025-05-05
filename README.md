@@ -18,14 +18,14 @@ Batik production in Indonesia generates wastewater containing residual dyes, con
 - **Optimization of system configuration** for minimal tank/pump usage using MINLP.
 - **Achieved turbidity reduction** from 200 NTU to under 100 NTU.
 
-## 📊 System Model Summary
+## 📘 System Model Summary
 
 - System modeled as:  
-  $$ G(s) = \frac{k}{\tau s + 1} e^{-Ls} $$
-- Gain range: 7.06 – 51.96  
-- Time constant (τ): 1331 – 3293 seconds  
-- Reference model τ (MRAC): 859 seconds  
-- Control parameters: θ₀, γ derived from system ID
+  `G(s) = (k / (τs + 1)) * e^(-Ls)`
+- Gain range: 7.06 – 51.96
+- Time constant (τ): 1331 – 3293 seconds
+- Reference model τ (MRAC): 859 seconds
+- Control parameters: θ₀, γ derived from system identification
 
 
 ## 🧰 Requirements
