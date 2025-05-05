@@ -28,15 +28,74 @@ Batik production in Indonesia generates wastewater containing residual dyes, con
 - Control parameters: θ₀, γ derived from system ID
 
 
-## 🔧 Requirements
+## 🧰 Requirements
+
+### MATLAB
 
 - MATLAB (Recommended R2022a or later)
 - Statistics and Optimization Toolbox
 - Internet connection for ThingSpeak data retrieval
 
-## 🚀 Getting Started
+### ESP32 (C++) for IoT & Instrumentation
 
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/Colazzx/final_Project_ITB.git
-   cd final_Project_ITB
+The turbidity monitoring system uses an **ESP32** microcontroller to collect real-time data from a turbidity sensor and transmit it to **ThingSpeak** over WiFi. This forms the basis of the IoT component used for system identification and monitoring.
+
+#### Hardware Components
+
+- **ESP32 Dev Module**
+- **Turbidity Sensor** (e.g., SEN0189 or similar)
+- Breadboard and Jumper Wires
+- Resistors (as required for sensor connection)
+- Power Source (USB or external 5V)
+- (Optional) LCD / OLED Display
+
+#### Arduino Libraries (for ESP32)
+
+Ensure the following libraries are installed via the Arduino IDE:
+
+- `WiFi.h` (for ESP32 WiFi)
+- `ThingSpeak.h` (ThingSpeak API client)
+- `Adafruit_Sensor` and others (optional, depending on added peripherals)
+
+#### ESP32 Setup
+
+1. Wire the turbidity sensor’s analog output to **GPIO36 (VP)** or any ESP32 ADC pin.
+2. Configure your WiFi credentials and ThingSpeak channel credentials.
+3. Upload the firmware using the Arduino IDE.
+4. Observe turbidity readings on your ThingSpeak dashboard.
+
+#### Example ESP32 Sketch
+
+```cpp
+#include <WiFi.h>
+#include <ThingSpeak.h>
+
+const char* ssid = "YOUR_WIFI_SSID";
+const char* password = "YOUR_WIFI_PASSWORD";
+
+WiFiClient client;
+unsigned long channelNumber = YOUR_CHANNEL_ID;
+const char* writeAPIKey = "YOUR_API_KEY";
+
+int turbidityPin = 36;  // GPIO36 (VP), ADC1 channel
+
+void setup() {
+  Serial.begin(115200);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\nWiFi Connected.");
+  ThingSpeak.begin(client);
+}
+
+void loop() {
+  int sensorValue = analogRead(turbidityPin);
+  float turbidity = map(sensorValue, 0, 4095, 0, 100); // Replace with proper calibration
+
+  ThingSpeak.writeField(channelNumber, 1, turbidity, writeAPIKey);
+  Serial.println("Turbidity: " + String(turbidity) + " NTU");
+  delay(15000);  // 15s update interval
+}
+
